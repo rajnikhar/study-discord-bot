@@ -50,5 +50,5 @@ client.on('interactionCreate', async interaction => {
   }
 });
 
-client.once('ready', () => console.log(`✅ Bot online as ${client.user.tag}`));
+client.once('clientReady', () => console.log(`✅ Bot online as ${client.user.tag}`));
 client.login(process.env.DISCORD_TOKEN);
