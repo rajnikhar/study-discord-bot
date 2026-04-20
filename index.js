@@ -43,12 +43,22 @@ client.on('interactionCreate', async interaction => {
     await cmd.execute(interaction);
   } catch (err) {
     console.error(err);
-    const msg = { content: '❌ Something went wrong.', ephemeral: true };
+    const msg = { content: 'Something went wrong.', ephemeral: true };
     interaction.replied
       ? await interaction.followUp(msg)
       : await interaction.reply(msg);
   }
 });
+
+// Load crons — runs every hour using setInterval (no extra packages)
+const cronFiles = fs.readdirSync(path.join(__dirname, 'src/crons'))
+  .filter(f => f.endsWith('.js'))
+for (const file of cronFiles) {
+  const job = require(`./src/crons/${file}`)
+  // Run once on startup, then every hour
+  job.execute(client)
+  setInterval(() => job.execute(client), 60 * 60 * 1000)
+}
 
 client.once('clientReady', () => console.log(`✅ Bot online as ${client.user.tag}`));
 client.login(process.env.DISCORD_TOKEN);
